@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/habits")          // prefijo para todos los endpoints de esta clase
@@ -16,7 +18,7 @@ public class HabitController {
     }
 
     @GetMapping()
-    public List<Habit> getAll() {
+    public List<Habit> getAll(@RequestParam(required = false) String name) {
         return service.findAll();
     }
 
@@ -31,8 +33,22 @@ public class HabitController {
     }
 
     @PostMapping
-    public ResponseEntity<Habit> create(@RequestBody Habit habit){
+    public ResponseEntity<Habit> create(@Valid @RequestBody Habit habit){
         Habit created = service.create(habit);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    @PutMapping("/{id}")
+    public Habit update(@PathVariable Long id, @Valid @RequestBody Habit habit){
+        return service.update(id, habit);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }

@@ -10,7 +10,8 @@ public class HabitService {
         this.repository = repository;
     }
 
-    public List<Habit> findAll() {
+    public List<Habit> findAll(String name) {
+
         return repository.findAll();
     }
 
@@ -26,5 +27,18 @@ public class HabitService {
 
     public int count() {
         return repository.count();
+    }
+
+    public Habit update(Long id, Habit habit){
+        findById(id);
+        habit.setId(id);
+        return repository.save(habit);
+    }
+
+    public void delete(Long id){
+        if(!repository.existsById(id)){
+            throw new HabitNotFoundException(id);
+        }
+        repository.deleteById(id);
     }
 }

@@ -25,7 +25,7 @@ public class HabitRepository {
 
     public Optional<Habit> findById(Long id) { return Optional.ofNullable(habits.get(id)); }
     public List<Habit> findAll()             { return new ArrayList<>(habits.values()); }
-    public boolean existsById(Long id)       { return habits.containsKey(id); }
+    public boolean existsById(Long id) { return habits.containsKey(id); }
     public void deleteById(Long id)          { habits.remove(id); }
     public int count()                       { return habits.size(); }
 }

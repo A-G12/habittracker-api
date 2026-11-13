@@ -18,8 +18,8 @@ public class HabitController {
     }
 
     @GetMapping()
-    public List<Habit> getAll(@RequestParam(required = false) String name) {
-        return service.findAll();
+    public List<HabitResponse> getAll(@RequestParam(required = false) String name) {
+        return service.findAll(name);
     }
 
     @GetMapping("/count")
@@ -28,19 +28,19 @@ public class HabitController {
     }
 
     @GetMapping("/{id}")
-    public Habit getById(@PathVariable Long id) {
+    public HabitResponse getById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Habit> create(@Valid @RequestBody Habit habit){
-        Habit created = service.create(habit);
+    public ResponseEntity<HabitResponse> create(@Valid @RequestBody HabitRequest request){
+        HabitResponse created = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public Habit update(@PathVariable Long id, @Valid @RequestBody Habit habit){
-        return service.update(id, habit);
+    public HabitResponse update(@PathVariable Long id, @Valid @RequestBody HabitRequest request){
+        return service.update(id, request);
     }
 
     @DeleteMapping("/{id}")
@@ -48,7 +48,4 @@ public class HabitController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
 }

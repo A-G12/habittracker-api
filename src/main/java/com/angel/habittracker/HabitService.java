@@ -10,29 +10,42 @@ public class HabitService {
         this.repository = repository;
     }
 
-    public List<Habit> findAll(String name) {
-
-        return repository.findAll();
+    public List<HabitResponse> findAll(String name) {
+        if(name == null) {
+            return repository.findAll().stream()
+                    .map(h -> toResponse(h)).toList();
+        }
+        return repository.findByNameContaining(name).stream()
+                .map(h -> toResponse(h)).toList();
     }
 
-    public Habit findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new HabitNotFoundException(id));   // ← tu línea de la capa 0
+    private HabitResponse toResponse(Habit habit){
+        return new HabitResponse(habit.getId(), habit.getName(), habit.getFrequency());
     }
 
-    public Habit create(Habit habit) {
-        habit.setId(null);      // ¿por qué? → pregunta 2 del checkpoint
-        return repository.save(habit);
+    public HabitResponse findById(Long id) {
+        Habit habit = repository.findById(id)
+                .orElseThrow(() -> new HabitNotFoundException(id));
+        return toResponse(habit);
+    }
+
+    public HabitResponse create(HabitRequest request) {
+        Habit habit = new Habit(null, request.name(),  request.frequency());
+        Habit saved = repository.save(habit);
+        return toResponse(saved);
     }
 
     public int count() {
         return repository.count();
     }
 
-    public Habit update(Long id, Habit habit){
-        findById(id);
-        habit.setId(id);
-        return repository.save(habit);
+    public HabitResponse update(Long id, HabitRequest request){
+        if(repository.existsById(id)){
+            Habit habit = new Habit(id, request.name(), request.frequency());
+            repository.save(habit);
+            return toResponse(habit);
+        }
+        throw new HabitNotFoundException(id);
     }
 
     public void delete(Long id){

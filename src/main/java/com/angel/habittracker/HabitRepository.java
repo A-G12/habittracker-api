@@ -23,6 +23,13 @@ public class HabitRepository {
         return habit;
     }
 
+    public List<Habit> findByNameContaining(String name) {
+        return findAll()
+                .stream()
+                .filter(h -> h.getName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
+    }
+
     public Optional<Habit> findById(Long id) { return Optional.ofNullable(habits.get(id)); }
     public List<Habit> findAll()             { return new ArrayList<>(habits.values()); }
     public boolean existsById(Long id) { return habits.containsKey(id); }

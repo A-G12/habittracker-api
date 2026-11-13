@@ -21,12 +21,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
-    // Falló una regla de @Valid → 400, con el detalle de cada campo
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ValidationErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return ResponseEntity.badRequest().body(errors);
+                .forEach(fieldError -> errors.put(fieldError.getField(), fieldError.getDefaultMessage()));
+        ValidationErrorResponse body = new ValidationErrorResponse(400, errors, LocalDateTime.now());
+        return ResponseEntity.badRequest().body(body);
     }
 }
